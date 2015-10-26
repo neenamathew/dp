@@ -1,0 +1,73 @@
+
+
+<!-- Form for new post in the group -->
+<% user_in_group =  current_user.groups.find_by(name: @group.name) 
+if user_in_group.try(:name) %>
+
+<% if @group.name != "public" then %>
+<div class="qqq">
+<div class = "createGroupcreateGroup">
+
+<p><h4> Group : <%= @group.name %></h4></p>
+<p><h4> Owner : <%= User.find(@group.user_id).first_name %></h4></p>
+</div>
+
+<!-- If current user created the group, can add other users to group -->
+<% if @group.user_id == current_user.id %>
+  <div class="wellwellwell">
+    <%= form_for :@group, url: add_group_user_user_group_path(@group.id) do |f| %>
+      <div class ="form-group">
+        <%= f.label :Users, {class: "col-sm-2 control-label"} %>
+        <div class = "col-sm-11">
+          <input type = "text" list = "UserList" name = "name" style="width:100%;">
+          <datalist id = "UserList"><%= user_list %></datalist>
+          <%= f.submit "Add user", class: "btn btn-sm btn-success pull-right post-button" %>
+        </div>
+     </div>
+    <% end %>
+</div>
+
+<% else %>
+<div class ="wellwellwell">
+<br>
+<% user_group_detail = UserGroup.find_by(group_id: @group.id, user_id: current_user.id)
+ if user_group_detail != nil %>
+
+  <%= button_to 'Leave Group', user_group_path(user_id: user_group_detail.user_id,group_id: user_group_detail.group_id), method: :delete, data: { confirm: 'Are you sure?' } %>
+ <% end %>
+</div>
+<% end %>
+</div>
+
+
+<div class="well">
+  <div class="text__">What's New</div>
+  <%= form_for :post, url: group_posts_path(@group.id) , method: :post, class: "form-horizontal" do |f| %>
+    <div class="form-group" style="padding:12px;">
+      <%= f.text_area :message, class: "form-control", placeholder: "New posts" %>
+      <%= f.submit "Post", class: "btn btn-success btn-sm pull-right post-button" %>
+    </div>
+  <% end %>
+</div>
+
+
+<%= render 'private_group' %>
+
+<% else %>
+<br><br>
+<div class="well">
+
+  <div class="text__">What's New</div>
+  <%= form_for :post, url: group_posts_path(@group.id) , method: :post, class: "form-horizontal" do |f| %>
+    <div class="form-group" style="padding:12px;">
+      <%= f.text_area :message, class: "form-control form-control", placeholder: "New posts" %>
+      <%= f.submit "Post", class: "btn btn-sm btn-success pull-right post-button" %>
+    </div>
+  <% end %>
+</div>
+<%= render 'public_group' %>  
+
+<% end %>
+<% else %>
+<%= render 'non_member_private_group' %>  
+<% end %>

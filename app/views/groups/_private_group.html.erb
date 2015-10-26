@@ -1,0 +1,140 @@
+
+<!-- Recursion for multi level comments (display and new) -->
+<% def draw_tree(comment,post) %>
+<% user  =User.find(comment.user_id) %>
+<% photo  = Photo.find_by(user_id: user.id) %>
+<br>
+  <div class=" comment_align">
+  <div class ="timeline-comment-header222">
+  <% if user.image.current_path == nil %>
+
+ <%= image_tag "/thumb_default.png" %>
+        <% else %>
+ <%= image_tag user.image_url(:thumb).to_s %>
+<% end %>
+ <div class = "text_"><%= link_to "#{user.first_name}", user %>  </div></div>
+ <div class=" comment_align1"><%= simple_format( comment.message) %></div>
+ </div>
+
+  <div class = "align">
+    <%= if comment.user_id == current_user.id then
+      link_to 'delete', group_post_comment_path(@group.id,post.id,comment), method: :delete, data: { confirm: 'Are you sure?' }
+    end %><br>
+    <%= timeago_tag comment.created_at, :nojs => true, :limit => 10.years.ago %>
+  </div>
+
+  <div class = "sample">
+    <div class = "form-group2" >
+      <%= form_for :comment, url: create_child_group_post_comment_path(@group.id, post.id, comment.id) , method: :post, class: "form-horizontal" do |f| %>
+      <%= f.text_field :message , class: "form-control", placeholder: "Reply" %>
+      <%= f.submit "Reply", class: "btn btn-sm btn-success pull-right post-button" %>
+      <% end %>
+    </div>
+    <a class="button1 align"> Reply</a>
+      </div>
+
+  <div class = "comment_child">
+    <div class = "comment_child_display">
+  <% comment.children.each do |child| %>
+        <% h User.find(child.user_id).first_name %>
+        <% child.message %>
+   		  <ul><% draw_tree(child,post) %></ol>
+        
+  <% end; nil %>
+</div>
+<% if comment.children.first.try(:id) != nil %>
+   <a class="button11 align"> View More </a>
+    <a class="button12 align"> View less </a>
+   <% end %>
+</div>
+
+<% end %>
+
+<!-- List all posts with comment tree -->
+<div class="well">
+  <h4>Posts</h4>
+
+ <% if @group.posts.first.try(:id) == nil %>
+<br>
+   <div class = "post_align">
+<div class = "post_align">  
+<div class = "post_align">  
+<div class = "post_align">
+<div class="text__"> 
+ No posts in group.
+ </div>
+ </div></div></div></div>
+ <br>
+  <% end %>
+  <% @group.posts.order(created_at: :desc).each do |post| %>
+ 
+
+<% user  =User.find(post.user_id) %>
+  <div class="well post well_post">
+  
+<div class = "post_align">
+
+<div class ="timeline-comment-header1">
+<div class ="timeline-comment-header222">
+<% if user.image.current_path == nil %>
+ <%= image_tag "/thumb_default.png" %>
+        <% else %>
+<%= image_tag user.image_url(:thumb).to_s %>
+<%end %>
+<div class = "text_"><%= link_to "#{user.first_name}", user %>  </div></div>
+ <div class = "post_align1"><%=simple_format(post.message)%></div>
+  
+    <!-- <span class="glyphicon glyphicon-remove"></span> -->
+
+    <div class ="align">
+      <%= if post.user_id == current_user.id then
+        link_to 'delete', group_post_path(@group.id,post), method: :delete, data: { confirm: 'Are you sure?' }
+      end %><br>
+      <%= timeago_tag post.created_at, :nojs => true, :limit => 10.years.ago %>
+    </div>
+   </div>
+    <% post.comments.each do |comment|   
+        if comment.parent_id == post.id then %>
+         	<% draw_tree(comment,post) %>
+				<% end 
+		end %>
+     </div>    
+    <!-- New comment to each post -->
+    <%= form_for :comment, url: group_post_comments_path(@group.id, post.id) , method: :post, class: "form-horizontal" do |f| %>
+    
+      <div class="form-group" style="padding:12px;" id = "comment">
+        <%= f.text_field :message , class: "form-control", placeholder: "comment" %>
+        <%= f.submit "Comment", class: "btn btn-sm btn-success pull-right post-button" %>
+      </div>
+     
+    <% end %>
+  </div>
+
+  <% end %>
+
+</div>
+
+
+
+<!-- Lsit of all memebers of the group -->
+<% user_group_detail = UserGroup.find_by(group_id: @group.id)
+ if user_group_detail != nil %>
+  <div class="well transbox ">
+    <table class="table ">
+      <th><h4>List of members</h4></th>
+      <% @group.users.where("user_id != ?", current_user.id).each do |user_group_detail| %>
+        <tbody>
+        <tr><td><dt><%= h user_group_detail.user_name -%> </dt></td>
+        <% if @group.user_id == current_user.id %>
+          <td><%= link_to 'delete', user_group_path(user_id: user_group_detail.id,group_id: @group.id), method: :delete, data: { confirm: 'Are you sure?' } %></td></tr>
+        <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
+<% end %>
+
+
+
+
+

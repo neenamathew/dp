@@ -1,0 +1,49 @@
+<div class="admin_position">
+ <div class = "pull-right">
+  <div class = "align_searchalign_search">
+<%= form_tag admin_user_index_users_path, :method => 'get' do %>
+
+ <%= text_field_tag :search, params[:search] %>
+ <%= submit_tag "Search", :name => nil, class: "btn btn-sm btn-primary" %>
+
+<% end %>
+</div>
+</div>
+
+<br><br>
+<div class = "post_align">
+<h4>Listing Users</h4>
+</div>
+<!-- Listing all users except current user - admin -->
+   <div class = "transbox  well">
+<table class="table table-striped"  >
+  <thead bgcolor="#E0E0E0">
+    <tr>
+      <td> <dl><dt>Name </dt></dl> </td>
+      <td> <dl><dt> User name </dt></dl> </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+  <% if @users.first.try(:id) == nil %>
+  <td colspan="5" align="center"><div class="text_">  No results found.</div></td>
+  <% end %>
+    <% @users.order(created_at: :desc).each do |user| %>
+      <tr align="left">
+        <td><%= h user.first_name %></td>
+        <td><%= h user.user_name %></td>
+        <td><%= link_to 'Show', user %></td>
+        <td><%= link_to 'Edit', edit_user_path(user) %></td>
+        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+
+<div class = "post_align0">
+<%= paginate @users %>
+</div>
+</div>

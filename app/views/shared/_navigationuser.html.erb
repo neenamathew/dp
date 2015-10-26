@@ -1,0 +1,64 @@
+
+<div class="navbar navbar-default" id="subnav">
+    <div class="col-md-12">
+        <div class="navbar-header">
+           <% if current_user then %>
+           
+          <a href="#" style="margin-left:1px;" class="navbar-btn btn btn-primary btn-plus dropdown-toggle" data-toggle="dropdown"> Groups <b class="caret"> <small></i></small></b></i></small></a>
+          <ul class="nav dropdown-menu">
+            <%  if current_user.groups.try(:name) != nil then  current_user.groups.each do |user_group| %>
+             <li class="<%= 'active' if current_page?(group_path(user_group)) %>"><%= link_to user_group.name, group_path(user_group) %></li>
+
+            <% end %>
+             <li class="<%= 'active' if current_page?(groups_path) %>"><%= link_to "All Groups", groups_path %></li>
+             <%end end%>
+
+          
+          </ul>
+         
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse2">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </button>
+      
+        </div>
+
+        <a class="navbar-brand" href="#">Discussion Platform</a>
+        
+      <div class="collapse navbar-collapse" id="navbar-collapse2">
+   <div class="collapse navbar-collapse" id="navbar-collapse2">
+          <ul class="nav navbar-nav navbar-right">
+          
+          <% if current_user.present? %>
+          <%  count = Notification.where('user_id = ? AND created_at > ?',current_user.id, current_user.notification_time).count      
+                    %>
+
+             <li style="margin:15px 10px 0  0;"<%= 'active' if current_page?(user_notifications_path(current_user.id)) %>" ><span class="badge red"><%= link_to "Notifications #{count}", user_notifications_path(current_user.id) %></span></a></li>
+              <% if current_user.present? %>
+         
+                    <li class="<%= 'active' if current_page?(group_posts_path(current_user.id)) %>"><%= link_to 'Home',  home_path(current_user.id) %></li>
+             <% end %>
+            <li class="<%= 'active' if current_page?(users_path) %>"><%= link_to 'Find Friends', users_path %></li>
+              <% if current_user.present? %>
+          <li class="<%= 'active' if current_page?(user_path(current_user.id)) %>"><%= link_to 'Profile', user_path(current_user.id) %></li>
+          <%end%>
+           <li class="<%= 'active' if current_page?(new_group_path) %>"><%= link_to 'New Group', new_group_path %></li>
+           <% end %>
+         
+           <% if current_user.present? %>
+            <li><%= link_to "Logout", destroy_user_session_path, method: :delete if current_user %></li>
+            <% elsif current_page?(new_user_session_path) %>
+            <li><%= link_to "Logout", destroy_user_session_path, method: :delete if current_user %></li>
+          <% else %>       
+             <li><%= link_to "Login", new_user_session_path,  method: :get %></li>
+          <% end %>
+          
+            
+           </ul>
+        </div>  
+     </div> 
+</div>
+
+</div>

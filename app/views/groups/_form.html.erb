@@ -1,0 +1,24 @@
+
+<%= form_for(@group) do |f| %>
+
+  <% if @group.errors.any? %>
+    <div id="error_explanation">
+      <h4><%= pluralize(@group.errors.count, "error") %> prohibited this action:</h4>
+      <ul>
+        <% @group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :group %><br>
+    <%= f.text_field :name, :placeholder => "enter name" %>
+  </div>
+  
+  <div class="actions">
+    <%= f.submit "Create Group", class: "btn btn-sm btn-success pull-left post-button" %>
+  </div>
+  
+<% end %>

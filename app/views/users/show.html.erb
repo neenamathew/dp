@@ -1,0 +1,129 @@
+<p id="notice"><%= notice %></p>
+
+<!-- User Profile -->
+<div id="createGroup">
+<div class = "createGroupcreateGroup">
+<% if current_user.id == @user.id %>
+<h4>My Details</h4></div>
+<% else %>
+<h4> <%= @user.user_name %> details</h4>
+<% end %>
+
+<div class ="wellwellwell">
+<% if @user.id != current_user.id  then %>
+<br>
+ <% if current_user.following.find_by(user_name: @user.user_name) then %>
+
+   <%= form_for(current_user.active_relationships.find_by(followed_id: @user.id),
+             method: :delete ) do |f| %>
+   &nbsp;&nbsp;&nbsp;<%= f.submit "Unfollow", class: "btn btn-large post-button" %>
+   
+   <% end %>
+
+<% else %>
+
+   <%= form_for(current_user.active_relationships.build) do |f| %>
+   <div><%= f.hidden_field_tag :followed_id, @user.id %><%= f.hidden_field_tag :follower_id, current_user.id %></div>
+   &nbsp;&nbsp;&nbsp;<%= f.submit "Follow", class: "btn btn-large post-button" %>
+ 
+    <% end %>
+
+    <% end %>
+<% end %>
+</div>
+<br>
+<br>
+<div class = "post_align">
+<% if current_user.id != @user.id %>
+<div class = "image_align"> <% end %>
+<% if @user.image.current_path == nil then %>
+ <%= image_tag "/thumb_user_default.png", size: "200"%><br>
+        <% else %>
+<%= image_tag @user.image_url(:thumb_user).to_s %>
+<% end %>
+<% if current_user.id != @user.id %> </div> <% end %>
+
+<% if current_user == @user then %>
+
+<div class = "parent">
+<div class = "sample1 well_post">
+<%= form_for :user, url:update_profile_picture_user_path(@user.id), method: :post, :html => {:multipart => true} do 
+	|f|  %>
+ <div class="field">
+<%= f.file_field :image %>
+</div>
+
+ <div class="actions">
+ 
+    <%= f.submit "Update", class: "btn btn-sm btn-success post-button button_pic"%>
+  </div>
+<% end %>
+
+</div>
+ <button id = "add_comment" type = "button" class = "btn btn-sm btn-success post-button button_pic">Change Profile Picture</button>
+</div>
+</div>
+<% end %>
+ 
+<div class = "transbox well" >
+
+<table class="table table-striped">
+	<tbody>
+	 <tr><td>First Name</td><td><%= @user.first_name %></td><tr>
+	 <tr><td>Last Name</td><td><%= @user.last_name %></td><tr>
+	 <tr><td>Email Id</td><td><%= @user.email %></td><tr>
+	 <tr><td>User Name</td><td><%= @user.user_name %></td><tr>
+	 <% if current_user == @user then %><tr><td colspan="3"><%= link_to 'Edit', edit_user_path(@user) %></td></tr> <% else %> <br> <% end %>
+	</tbody>
+</table>
+
+</div>
+
+<br>
+<!-- List all groups of the user -->
+<div class = "createGroupcreateGroup">
+<% if current_user.id == @user.id %>
+<h4>&nbsp;&nbsp;&nbsp;&nbsp; My Groups</h4>
+<% else %>
+<h4> <%= @user.user_name %> groups</h4>
+<% end %>
+</div>
+<% if  @groups != nil %>
+<div class = " transbox well">
+	<table class="table ">
+
+	<tbody>
+
+
+           <% if @user.groups.last.try(:name) == "public" %>
+<br>
+   <div class = "post_align">
+<div class = "post_align">  
+<div class = "post_align">  
+<div class = "post_align">
+<div class="text__"> 
+ Have not created groups yet.
+ </div>
+ </div></div></div></div>
+ <br>
+  <% end %>
+
+ 
+
+		<%  @groups.each do |group|  %>
+		<% if group.name != "public" and group.user_id == @user.id %>
+				<tr>  <td> <%= group.name  %> </td>
+				<td><%= link_to 'Show',  group_path(group.id) %></td>
+		  		 <%  if group.user_id == current_user.id and group.name != "public" %>
+		 		<td><%= link_to 'Edit', edit_group_path(group) %></td>
+       			<td><%= link_to 'Destroy', group, method: :delete, data: { confirm: 'Are you sure?' } %></td></tr>
+		  		<% end %>
+		  		<% end %>
+		<% end %>
+	</tbody>
+	</table>
+	</div>
+<% end %> 
+		
+
+</div>

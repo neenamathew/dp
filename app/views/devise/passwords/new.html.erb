@@ -1,0 +1,34 @@
+
+<div class ="createGroup">
+<h4>Forgot your password?</h4>
+</div>
+<div class ="post11post11">
+<div class =" createGroup1 ">
+<br>
+<div class =" text_">
+<div class =" align_log">
+Sent Request</div></div>
+<br>
+<% messages = resource.errors.full_messages %>
+
+<% if messages != [] %>
+  <div id="error_explanation">
+  
+      <%= "#{messages}" %>
+    </div>
+<% end %>
+
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+    <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Send reset password instructions", class: "btn btn-sm btn-success pull-left post-button" %>
+  </div>
+<% end %>
+
+
+</div>
+</div>

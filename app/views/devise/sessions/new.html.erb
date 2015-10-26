@@ -1,0 +1,40 @@
+
+<div class ="createGroup">
+<h4> Welcome To Discussion Platform</h4>
+</div>
+<div class ="post11post11">
+<div class =" createGroup1">
+<br>
+<div class =" text_">
+<div class =" align_log">
+Login</div></div>
+<br>
+
+
+
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+
+ <br>
+  <div class="actions">
+    <%= f.submit "Login", class: "btn btn-sm btn-success pull-left post-button" %>
+  </div>
+<% end %>
+
+<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+<br>
+  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
+<% end -%>
+
+</div>
+</div>

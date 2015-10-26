@@ -1,0 +1,81 @@
+
+
+<div class = "post_align">
+<div class = "align_search111">
+<%= form_tag users_path, :method => 'get' do %>
+
+ <%= text_field_tag :search, params[:search] %>
+ <%= submit_tag "Search", :first_name => nil, class: "btn btn-sm btn-primary" %>
+
+<% end %>
+</div>
+</div>
+<br>
+<br>
+<br>
+<div class = "post_align_upup"><h4> View Profiles</h4></div>
+<!-- Display userss with total number of posts by the user --> 
+ <div class="panel-body">
+
+<%  if @users.first.try(:id) == nil %>
+<div class = "post_align0">
+<div class =" text_">No Results found</div></div>
+  <%  end %>
+
+
+   <% @users.order(created_at: :asc).each do |user| 
+
+     count = 0
+     user.groups.each do |group|
+        group.posts.each do |post|
+            if post.user_id  == user.id then
+              count += group.posts.count
+            end
+        end
+     end %>
+    
+       <div class="well post_post">
+         <div class="media">
+           <a class="thumbnail pull-left" href="#">
+                      
+<% if user.image.current_path == nil %>
+ <%= image_tag "/thumb_show_default.png" %>
+        <% else %>
+<%= image_tag user.image_url(:thumb_show).to_s %>
+<% end %>
+</a>
+ 
+           <div class="media-body">
+              <h4 class="media-heading"><p><%= link_to "#{user.first_name}", user %> </h4>
+              
+             <p><span class="label label-info"><%= count %> posts</span> <span class="label label-primary"><%= user.followers.count %> followers</span></p>
+<p> 
+       <% if current_user.id != user.id %>       
+ <% if current_user.following.find_by(user_name: user.user_name) then %>
+
+   <% form_for(current_user.active_relationships.find_by(followed_id: user.id),
+             method: :delete ) do |f| %>
+   &nbsp;&nbsp;&nbsp;<% f.submit "Unfollow", class: "btn btn-xs btn-default" %>
+   
+   <% end %>
+
+<% else %>
+
+   <%form_for(current_user.active_relationships.build) do |f| %>
+   <div><% f.hidden_field_tag :followed_id, user.id %><% f.hidden_field_tag :follower_id, current_user.id %></div>
+   &nbsp;&nbsp;&nbsp;<% f.submit "Follow", class: "btn btn-xs btn-default" %>
+ 
+    <% end %>
+<% end %>
+<% end %>
+</a>
+</p>
+           </div>
+         </div>
+      </div>
+   <% end %>
+ </div>
+
+<div class = "post_align0">
+<%= paginate @users %>
+</div>

@@ -1,0 +1,58 @@
+<div class="qqq">
+<div class = "createGroupcreateGroup">
+<br><br><br>
+<p>
+  <strong>Name:</strong>
+  <%= @group.name %>
+</p>
+
+<p>
+  <strong>Created by:</strong>
+  <%= User.find(@group.user_id).first_name %>
+</p>
+
+<%= link_to 'Edit', edit_group_path(@group) %> |
+<%= link_to 'Back', admin_group_index_users_path %>
+<br>
+<br>
+
+<!-- List users of the group -->
+<% user_group_detail = UserGroup.find_by(group_id: @group.id)
+if user_group_detail != nil %>
+	  <div class = "transbox  well">
+<table class = "table table-striped" >
+		<th colspan="2" align="center">List of users</th>
+		<% @group.users.each do |user_group_detail| %>
+		<tbody>
+		    <tr >
+				<td><%= h user_group_detail.user_name -%> </td>
+				<td><%= link_to 'Destroy', user_group_path(user_id: user_group_detail.id,group_id: @group.id),
+				method: :delete,
+				data: { confirm: 'Are you sure?' } %></td>
+			</tr>
+    	</tbody>
+		<% end %>
+	</table>
+	</div>
+<% end %>
+
+<!-- Add users to the group -->
+<div class="">
+
+<%= form_for :@group, url: add_group_user_user_group_path(@group.id) do |f| %>
+	<div class ="form-group">
+		<%= f.label :Users, {class: "col-sm-2 control-label"} %>
+	  	<div class = "col-sm-4">
+	  		<input type = "text" list = "UserList" name = "name" style="width:100px;">
+      		<datalist id = "UserList"><%= user_list  %></datalist>
+			<div class = "actions">
+				<%= button_to('Add users ', :html => {:class => 'btn.btn-large.btn-success'})  %>
+			</div>
+	 	 </div>
+	</div>
+<% end %>
+</div>
+
+
+
+</div></div>

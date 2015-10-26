@@ -1,0 +1,58 @@
+<%= flash[:alert1] %>
+<br>
+
+
+   <div class ="post_align00">
+   <h4> Welcome to Discussion Platform </h4>
+   </div>
+
+
+ <% if @posts.last.try(:message) == nil %>
+<br>
+<br><br>
+   <div class = "post_align">
+<div class = "post_align">  
+<div class = "post_align">  
+<div class = "post_align">
+<div class="text__"> 
+<br> No posts yet. <br><br> Join new groups. <br><br> Find new friends.<br><br>
+ </div>
+ </div></div></div></div>
+
+<% end %>
+<!-- Posts in the groups of which the current_user is a member-->
+ <% @posts.order(created_at: :desc).each do |post| post.message %>
+   <div class = "transbox  well0">
+    <table class = "table ">
+    <%  user = User.find(post.user_id )%>
+    <tbody>
+      <tr><td> <div class = "align_group text_"><%= h Group.find(post.group_id).name %> </div> 
+ <div class ="timeline-comment-header111">
+
+       <% if user.image.current_path == nil  %>
+         <%= image_tag "/thumb_default.png" %>
+       <% else %>
+          <%= image_tag user.image_url(:thumb).to_s %>
+       <% end %>
+   
+       <div class = "text_"><%= link_to "#{user.first_name}", user %> </div>  
+             </div>
+
+            
+ <div class ="align_up">
+
+      <dl><dt>  <dl><dt><%= post.message %> </dt></dl> </dt></dl>
+      <div class ="align2">
+        <dd> <%= link_to 'View More',  group_path(post.group_id) %></dd>
+      </div>
+      </div>
+      </dl></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+   <% end %>
+   
+   <div class = "post_align0">
+<%= paginate @posts %>
+</div>

@@ -1,0 +1,31 @@
+ <div class ="post_align">
+<p><h4>Group : <%= @group.name %></h4></p>
+<p><h4>Owner : <%= User.find(@group.user_id).first_name %></h4></p>
+</div>
+ <div class= "align" >
+
+<%= button_to "Join Group", { :controller => "groups", :action => "send_mail_on_request"}, class: "btn btn-sm btn-success post-button" %>
+
+  </div>
+<!-- Lsit of all memebers of the group -->
+<% user_group_detail = UserGroup.find_by(group_id: @group.id)
+ if user_group_detail != nil %>
+  <div class="well transbox ">
+    <table class="table ">
+      <th><h4>List of members</h4></th>
+      <% @group.users.where("user_id != ?", current_user.id).each do |user_group_detail| %>
+        <tbody>
+        <tr><td><dt><%= h user_group_detail.first_name -%> </dt></td>
+        <% if @group.user_id == current_user.id %>
+          <td><%= link_to 'delete', user_group_path(user_id: user_group_detail.id,group_id: @group.id), method: :delete, data: { confirm: 'Are you sure?' } %></td></tr>
+        <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
+<% end %>
+
+
+
+
+

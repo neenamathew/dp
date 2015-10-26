@@ -1,0 +1,11 @@
+<div class ="post11">
+<div class=" createGroup ">
+<h4>Update Group Name</h4>
+
+<%= render 'form' %>
+<br>
+<% if current_user.user_role.role.role_type != "admin" %>
+
+<%= link_to 'Back', current_user %> 
+<% end %>
+</div></div>

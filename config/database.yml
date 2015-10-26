@@ -1,0 +1,23 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+
+  pool: 5
+
+development:
+  <<: *default
+  database: DiscussionPlatform_development2
+
+
+test:
+  <<: *default
+  database: DiscussionPlatform_test2
+
+
+production:
+  <<: *default
+  database: dcvmshlksl9bc9
+  username: wqpqawdgyndign
+  password: 9NKr2OBGzn7vIUekkTVxxi2YdS
+  host: ec2-107-21-125-143.compute-1.amazonaws.com

@@ -1,0 +1,140 @@
+
+  <!-- To Do - comments diplay proper -->
+  <!-- Recursion for multi level comments (display and new) -->
+  <% def draw_tree(comment,post) %>
+  <% user  =User.find(comment.user_id) %>
+<% photo  = Photo.find_by(user_id: user.id) %>
+
+
+  <div class="comment_alignalign">
+<div class ="timeline-comment-header222">
+<% if user.image.current_path == nil %>
+    <%= image_tag "/thumb_default.png" %>
+        <% else %>
+ <%= image_tag user.image_url(:thumb).to_s %>
+<% end %>
+
+  <div class = "  text_"><%= link_to "#{user.first_name}", user %> </div></div>
+   <div class=" comment_align2"><%= simple_format(comment.message)%> </div>
+    <div class="align">
+
+    <%= if comment.user_id == current_user.id then
+         link_to 'Destroy', group_post_comment_path(@group.id,post.id,comment), method: :delete, data: { confirm: 'Are you sure?' }
+                end %>
+           <br>    
+    <%= timeago_tag comment.created_at, :nojs => true, :limit => 10.years.ago %>
+    </div>
+    </div>
+    <div class="sample">
+    <div class="form-group2"  >
+      <%= form_for :comment, url: create_child_group_post_comment_path(@group.id, post.id, comment.id) , method: :post, class: "form-horizontal" do |f| %>
+      <%= f.text_field :message , class: "form-control", placeholder: "Reply" %>
+      <%= f.submit "Reply", class: "btn btn-sm btn-success pull-right post-button" %>
+      <% end %>
+    </div>
+    <a class="button1 align"> Reply</a>
+    </div>
+     <div class = "comment_child">
+    <div class = "comment_child_display">
+    <% comment.children.each do |child| %>
+       <% h User.find(child.user_id).first_name %>
+        <% child.message %>
+          <ol><% draw_tree(child,post) %></ol>
+        
+    <% end; nil %></div>
+    <% if comment.children.first.try(:id) != nil %>
+   <a class="button11 align"> View More </a>
+    <a class="button12 align"> View less </a>
+   <% end %></div>
+<% end %>
+
+    <!-- List all posts with comment tree -->
+    <% def display_post(posts) %>
+
+ <% if @group.posts.first.try(:id) == nil %>
+<br>
+   <div class = "post_align">
+<div class = "post_align">  
+<div class = "post_align">  
+<div class = "post_align">
+<div class="text__"> 
+ No posts in group.
+ </div>
+ </div></div></div></div>
+ <br>
+  <% end %>
+ 
+
+
+    <div class="well">
+    <br>
+      
+      <% posts.order(created_at: :desc).each do |post| %>
+        <div class="well post well_post">
+        <% user = User.find(post.user_id)
+        photo  = Photo.find_by(user_id: user.id) 
+        %>
+
+<div class = "post_align">
+<div class ="timeline-comment-header1"><div class ="timeline-comment-header222">
+ <% if user.image.current_path == nil %>
+      <%= image_tag "/thumb_default.png" %>
+ <% else %>
+    <%= image_tag user.image_url(:thumb).to_s %>
+<% end %>
+      
+       <div class = "text_"><%= link_to "#{user.first_name}", user %> </div></div>
+         <div class = "post_align2"> <%= simple_format(post.message) %></div>
+         
+         <div class="align">
+            <%= if post.user_id == current_user.id then
+            link_to 'Destroy', group_post_path(@group.id,post), method: :delete, data: { confirm: 'Are you sure?' }
+            end %>
+            <%= timeago_tag post.created_at, :nojs => true, :limit => 10.years.ago %>
+          </div>
+<br>
+          </div>
+              <% post.comments.each do |comment|   
+                if comment.parent_id == post.id then %>
+                <% draw_tree(comment,post) %>
+           <% end 
+        end %>
+        </div>
+        <br><br>
+        <!-- New comment to each post -->
+        <%= form_for :comment, url: group_post_comments_path(@group.id, post.id) , method: :post, class: "form-horizontal" do |f| %>
+        
+          <div class="form-group"  id = "comment">
+            <%= f.text_field :message , class: "form-control", placeholder: "Add comment" %>
+            <%= f.submit "Comment", class: "btn btn-sm btn-success pull-right post-button" %>
+            </div>
+            
+        
+        <% end %>
+<br>
+    </div>  
+      <% end %>
+  </div>
+<% end %>
+  
+ <% user_ids = current_user.following.select(:id) %>
+    <div class ="post_align"> <h4>Posts</h4></div>
+    <% @posts = @group.posts.where('(user_id) in (?) or (user_id) in (?)', user_ids, current_user.id)
+ display_post(@posts) %> 
+ 
+
+ <!-- If current user created the group, can add other users to group -->
+<% if @group.user_id == current_user.id %>
+  <div class="well">
+    <%= form_for :@group, url: add_group_user_user_group_path(@group.id) do |f| %>
+      <div class ="form-group">
+        <%= f.label :Users, {class: "col-sm-2 control-label"} %>
+        <div class = "col-sm-4">
+          <input type = "text" list = "UserList" name = "name" style="width:100%;">
+          <datalist id = "UserList"><%= user_list %></datalist>
+          <%= f.submit "Add user", class: "btn btn-success pull-right post-button" %>
+        </div>
+     </div>
+    <% end %>
+  </div>
+<% end %>
